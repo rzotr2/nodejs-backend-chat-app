@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/user.model");
+const {decodeToken, verifyToken} = require("../services/authService");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -11,10 +12,18 @@ router.get("/", async (req, res) => {
     }
 });
 
-// Отримати користувача за id
-router.get("/:id", (req, res) => {
-    const id = req.params.id;
-    res.send("User with id " + id);
+router.get("/me",async (req, res) => {
+    try {
+        const token = req.header('Authorization').split(' ')[1];
+        const decoded = decodeToken(token);
+        verifyToken(token);
+
+        const user = await User.findOne({email: decoded.email});
+
+        res.status(200).json({user: user});
+    } catch (err) {
+        res.status(401).json({message: "User is not authorized"});
+    }
 });
 
 module.exports = router;
