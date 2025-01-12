@@ -24,9 +24,6 @@ const userSchema = new mongoose.Schema({
     country: {
         type: String,
     },
-    isLoggedIn: {
-        type: Boolean,
-    },
     isAdmin: {
         type: Boolean,
     },
